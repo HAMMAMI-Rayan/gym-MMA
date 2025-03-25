@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section">
+    <h1>{{ parametres.nom_salle }}</h1>
+    <p>{{ parametres.description }}</p>
+    <a href="{% url 'cours:liste' %}" class="btn btn-danger">Nos Cours</a>
+</div>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Nos Cours Populaires</h2>
+    <div class="row">
+        {% for cours in cours_populaires %}
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ cours.titre }}</h5>
+                    <p class="card-text">{{ cours.description|truncatewords:10 }}</p>
+                    <span class="badge bg-primary">{{ cours.niveau }}</span>
+                    <p>{{ cours.prix }}€ - {{ cours.duree }} min</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2 class="text-center mt-5 mb-4">Nos Entraîneurs</h2>
+    <div class="row">
+        {% for entraineur in entraineurs %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img src="{{ entraineur.photo.url }}" class="card-img-top" alt="{{ entraineur.nom }}">
+                <div class="card-body">
+                    <h5>{{ entraineur.prenom }} {{ entraineur.nom }}</h5>
+                    <p>{{ entraineur.specialite }}</p>
+                    <small>{{ entraineur.annees_experience }} ans d'expérience</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

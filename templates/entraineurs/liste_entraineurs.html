@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Nos Entraîneurs Experts</h1>
+    <div class="row">
+        {% for entraineur in entraineurs %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="{{ entraineur.photo.url }}" class="card-img-top" alt="{{ entraineur.nom }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ entraineur.prenom }} {{ entraineur.nom }}</h5>
+                    <p class="card-text">{{ entraineur.bio }}</p>
+                    <div class="d-flex justify-content-between">
+                        <span class="badge bg-success">{{ entraineur.specialite }}</span>
+                        <small>{{ entraineur.annees_experience }} ans d'expérience</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
