@@ -1,0 +1,53 @@
+<!-- gym/templates/gym/coach_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}Entraîneurs - MMA GYM{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Nos Entraîneurs</h1>
+            {% if user.is_superuser %}
+            <a href="{% url 'coach-create' %}" class="btn btn-danger">Ajouter un entraîneur</a>
+            {% endif %}
+        </div>
+        
+        {% if coaches %}
+        <div class="row">
+            {% for coach in coaches %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="card-title mb-0">{{ coach.user.first_name }} {{ coach.user.last_name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">{{ coach.speciality }}</h6>
+                        <p class="card-text">
+                            <strong>Expérience :</strong> {{ coach.experience }} ans
+                        </p>
+                        <p class="card-text">{{ coach.bio|truncatewords:30 }}</p>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'coach-detail' coach.id %}" class="btn btn-outline-dark">Voir le profil</a>
+                            {% if user.is_superuser or user == coach.user %}
+                            <div>
+                                <a href="{% url 'coach-update' coach.id %}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                {% if user.is_superuser %}
+                                <a href="{% url 'coach-delete' coach.id %}" class="btn btn-sm btn-outline-danger">Supprimer</a>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Aucun entraîneur n'est disponible pour le moment.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mma_gym.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MMA_GYM.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -20,16 +20,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-from cours.models import CategorieCours, Cours
-
-categorie = CategorieCours.objects.create(nom='MMA')
-
-cours = Cours.objects.create(
-    titre='Initiation MMA', 
-    categorie=categorie, 
-    description='Cours pour débutants', 
-    niveau='debutant', 
-    duree=60, 
-    prix=50.00
-)

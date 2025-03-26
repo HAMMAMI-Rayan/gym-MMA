@@ -1,0 +1,22 @@
+<!-- gym/templates/registration/logout.html -->
+{% extends 'base.html' %}
+
+{% block title %}Déconnexion - MMA GYM{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h2>Déconnexion</h2>
+            </div>
+            <div class="card-body text-center">
+                <p class="lead">Vous avez été déconnecté avec succès.</p>
+                <p>Merci d'avoir visité MMA GYM!</p>
+                <a href="{% url 'login' %}" class="btn btn-danger mt-3">Se reconnecter</a>
+                <a href="{% url 'index' %}" class="btn btn-secondary mt-3">Retour à l'accueil</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Cours - MMA GYM{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Nos Cours</h1>
+            {% if user.is_authenticated and user.is_staff or user.coach %}
+            <a href="{% url 'course-create' %}" class="btn btn-danger">Ajouter un cours</a>
+            {% endif %}
+        </div>
+        
+        <div class="mb-4">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h3>Filtrer les cours</h3>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row">
+                        <div class="col-md-4 mb-2">
+                            <label for="level" class="form-label">Niveau</label>
+                            <select class="form-select" id="level" name="level">
+                                <option value="">Tous les niveaux</option>
+                                <option value="BEG">Débutant</option>
+                                <option value="INT">Intermédiaire</option>
+                                <option value="ADV">Avancé</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="coach" class="form-label">Entraîneur</label>
+                            <select class="form-select" id="coach" name="coach">
+                                <option value="">Tous les entraîneurs</option>
+                                {% for coach in coaches %}
+                                <option value="{{ coach.id }}">{{ coach.user.first_name }} {{ coach.user.last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end mb-2">
+                            <button type="submit" class="btn btn-dark">Filtrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        {% if courses %}
+        <div class="row">
+            {% for course in courses %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="card-title mb-0">{{ course.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Niveau: <span class="badge bg-secondary">{{ course.get_level_display }}</span>
+                        </h6>
+                        <p class="card-text">
+                            <strong>Entraîneur:</strong> {{ course.coach.user.first_name }} {{ course.coach.user.last_name }}
+                        </p>
+                        <p class="card-text">
+                            <strong>Horaire:</strong> {{ course.schedule }}
+                        </p>
+                        <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'course-detail' course.id %}" class="btn btn-outline-dark">Détails</a>
+                            {% if user.is_superuser or user == course.coach.user %}
+                            <div>
+                                <a href="{% url 'course-update' course.id %}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                <a href="{% url 'course-delete' course.id %}" class="btn btn-sm btn-outline-danger">Supprimer</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Aucun cours n'est disponible avec les filtres sélectionnés.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil - MMA GYM{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-dark text-white p-5 mb-4 rounded">
+    <h1 class="display-4">Bienvenue à MMA GYM</h1>
+    <p class="lead">Votre salle de sport dédiée aux arts martiaux mixtes.</p>
+    <hr class="my-4">
+    <p>Rejoignez-nous pour apprendre les techniques MMA avec des entraîneurs professionnels</p>
+    {% if not user.is_authenticated %}
+    <a class="btn btn-danger btn-lg" href="{% url 'register' %}" role="button">S'inscrire maintenant</a>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h2 class="card-title">{{ coach_count }}</h2>
+                <p class="card-text">Entraîneurs experts</p>
+                <a href="{% url 'coach-list' %}" class="btn btn-danger">Voir tous les entraîneurs</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h2 class="card-title">{{ course_count }}</h2>
+                <p class="card-text">Cours disponibles</p>
+                <a href="{% url 'course-list' %}" class="btn btn-danger">Voir tous les cours</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h2 class="card-title">{{ member_count }}</h2>
+                <p class="card-text">Membres actifs</p>
+                {% if user.is_authenticated and not user.is_staff %}
+                <a href="{% url 'enrollment' %}" class="btn btn-danger">Gérer mes cours</a>
+                {% else %}
+                <a href="{% url 'register' %}" class="btn btn-danger">Rejoindre la communauté</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h3>Pourquoi choisir MMA GYM?</h3>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>Entraîneurs certifiés et expérimentés</li>
+                    <li>Équipements modernes et de qualité</li>
+                    <li>Cours pour tous les niveaux</li>
+                    <li>Atmosphère conviviale et motivante</li>
+                    <li>Programmes personnalisés</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h3>Disciplines enseignées</h3>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>Boxe anglaise</li>
+                    <li>Muay Thaï</li>
+                    <li>Jiu-Jitsu brésilien</li>
+                    <li>Grappling</li>
+                    <li>MMA</li>
+                    <li>Conditionnement physique spécifique</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

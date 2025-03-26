@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Cours - MMA GYM{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h2>Mes Inscriptions aux Cours</h2>
+            </div>
+            <div class="card-body">
+                {% if enrollments %}
+                <h4>Cours auxquels vous êtes inscrit</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Cours</th>
+                                <th>Entraîneur</th>
+                                <th>Niveau</th>
+                                <th>Horaire</th>
+                                <th>Date d'inscription</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enrollment in enrollments %}
+                            <tr>
+                                <td>{{ enrollment.course.name }}</td>
+                                <td>{{ enrollment.course.coach }}</td>
+                                <td>{{ enrollment.course.get_level_display }}</td>
+                                <td>{{ enrollment.course.schedule }}</td>
+                                <td>{{ enrollment.date_enrolled }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-outline-danger">Se désinscrire</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    Vous n'êtes inscrit à aucun cours pour le moment.
+                </div>
+                {% endif %}
+
+                <div class="mt-4">
+                    <h4>S'inscrire à un nouveau cours</h4>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-8">
+                                {% for field in form %}
+                                <div class="mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                    {{ field.errors }}
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-danger mb-3">S'inscrire au cours</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
