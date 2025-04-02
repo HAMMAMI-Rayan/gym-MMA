@@ -1,25 +1,22 @@
 from django.contrib import admin
-from .models import Coach, Course, Member, Enrollment
+from .models import UserProfile, Course, Reservation
 
-@admin.register(Coach)
-class CoachAdmin(admin.ModelAdmin):
-    list_display = ('user', 'speciality', 'experience')
-    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'speciality')
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'is_coach', 'phone_number')
+    list_filter = ('is_coach',)
+    search_fields = ('user__username', 'user__email', 'phone_number')
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'coach', 'level', 'max_students', 'schedule')
-    list_filter = ('level', 'coach')
-    search_fields = ('name', 'description', 'coach__user__username')
+    list_display = ('title', 'course_type', 'level', 'coach', 'date', 'start_time', 'end_time', 'max_participants')
+    list_filter = ('course_type', 'level', 'date', 'coach')
+    search_fields = ('title', 'description', 'coach__username')
+    date_hierarchy = 'date'
 
-@admin.register(Member)
-class MemberAdmin(admin.ModelAdmin):
-    list_display = ('user', 'date_of_birth', 'phone')
-    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'phone')
-    list_filter = ('date_of_birth',)
-
-@admin.register(Enrollment)
-class EnrollmentAdmin(admin.ModelAdmin):
-    list_display = ('member', 'course', 'date_enrolled', 'is_active')
-    list_filter = ('is_active', 'date_enrolled', 'course')
-    search_fields = ('member__user__username', 'course__name')
+@admin.register(Reservation)
+class ReservationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'created_at')
+    list_filter = ('course__course_type', 'course__date')
+    search_fields = ('user__username', 'course__title')
+    date_hierarchy = 'created_at'

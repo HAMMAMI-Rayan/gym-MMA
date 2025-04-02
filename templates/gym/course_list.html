@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des Cours{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Cours disponibles</h1>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Filtres</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="type" class="form-label">Type de cours</label>
+                <select name="type" id="type" class="form-select">
+                    <option value="">Tous les types</option>
+                    {% for type_code, type_name in course_types %}
+                        <option value="{{ type_code }}" {% if request.GET.type == type_code %}selected{% endif %}>{{ type_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="level" class="form-label">Niveau</label>
+                <select name="level" id="level" class="form-select">
+                    <option value="">Tous les niveaux</option>
+                    {% for level_code, level_name in levels %}
+                        <option value="{{ level_code }}" {% if request.GET.level == level_code %}selected{% endif %}>{{ level_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" name="date" id="date" class="form-control" value="{{ request.GET.date|default:'' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <div>
+                    <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if courses %}
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    {{ course.get_course_type_display }} - {{ course.get_level_display }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                    <p><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> {{ course.date }}</p>
+                    <p><i class="fas fa-clock"></i> <strong>Heure:</strong> {{ course.start_time }} - {{ course.end_time }}</p>
+                    <p><i class="fas fa-user"></i> <strong>Coach:</strong> {{ course.coach.get_full_name }}</p>
+                    
+                    <div class="progress mb-2">
+                        {% with available=course.get_available_spots total=course.max_participants %}
+                        {% with percentage=available|floatformat:0|safe|default:"0" %}
+                        {% with percentage_int=percentage|floatformat:0|safe|default:"0" %}
+                        <div class="progress-bar {% if percentage < 25 %}bg-danger{% elif percentage < 50 %}bg-warning{% else %}bg-success{% endif %}" 
+                            role="progressbar" style="width: {% widthratio available total 100 %}%" 
+                            aria-valuenow="{% widthratio available total 100 %}" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                        {% endwith %}
+                        {% endwith %}
+                        {% endwith %}
+                    </div>
+                    <p><i class="fas fa-users"></i> <strong>Places disponibles:</strong> {{ course.get_available_spots }} / {{ course.max_participants }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'course_detail' course.id %}" class="btn btn-primary">Détails</a>
+                    {% if user.is_authenticated and user.profile.is_coach and user == course.coach %}
+                    <a href="{% url 'course_update' course.id %}" class="btn btn-secondary">Modifier</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <p>Aucun cours disponible avec les critères sélectionnés.</p>
+    </div>
+{% endif %}
+
+{% if user.is_authenticated and user.profile.is_coach %}
+<div class="mt-4">
+    <a href="{% url 'course_create' %}" class="btn btn-success">
+        <i class="fas fa-plus-circle"></i> Créer un nouveau cours
+    </a>
+</div>
+{% endif %}
+{% endblock %}

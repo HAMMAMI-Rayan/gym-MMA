@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Mon Profil</h4>
+            </div>
+            <div class="card-body text-center">
+                {% if profile.photo %}
+                    <img src="{{ profile.photo.url }}" alt="Photo de profil" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                {% else %}
+                    <img src="/static/img/default-profile.png" alt="Photo de profil par défaut" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                {% endif %}
+                
+                <h5>{{ user.get_full_name }}</h5>
+                <p class="text-muted">@{{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Téléphone:</strong> {{ profile.phone_number|default:"Non renseigné" }}</p>
+                <p><strong>Rôle:</strong> {% if profile.is_coach %}Coach{% else %}Membre{% endif %}</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Modifier mon profil</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_phone_number" class="form-label">Numéro de téléphone</label>
+                        <input type="text" name="phone_number" id="id_phone_number" class="form-control" value="{{ profile.phone_number|default:'' }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_bio" class="form-label">Biographie</label>
+                        <textarea name="bio" id="id_bio" class="form-control" rows="4">{{ profile.bio|default:'' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_photo" class="form-label">Photo de profil</label>
+                        <input type="file" name="photo" id="id_photo" class="form-control">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Mes Réservations</h4>
+            </div>
+            <div class="card-body">
+                {% if reservations %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Cours</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Heure</th>
+                                    <th>Coach</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reservation in reservations %}
+                                <tr>
+                                    <td>{{ reservation.course.title }}</td>
+                                    <td>{{ reservation.course.get_course_type_display }}</td>
+                                    <td>{{ reservation.course.date }}</td>
+                                    <td>{{ reservation.course.start_time }} - {{ reservation.course.end_time }}</td>
+                                    <td>{{ reservation.course.coach.get_full_name }}</td>
+                                    <td>
+                                        <a href="{% url 'course_detail' reservation.course.id %}" class="btn btn-sm btn-info">Détails</a>
+                                        <a href="{% url 'cancel_reservation' reservation.id %}?next=profile" class="btn btn-sm btn-danger">Annuler</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>Vous n'avez pas encore de réservations.</p>
+                    <a href="{% url 'course_list' %}" class="btn btn-primary">Voir les cours disponibles</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

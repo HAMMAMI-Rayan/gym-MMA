@@ -1,5 +1,5 @@
 """
-WSGI config for MMA_GYM project.
+WSGI config for mma_gym project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MMA_GYM.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mma_gym.settings')
 
 application = get_wsgi_application()

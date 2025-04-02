@@ -1,5 +1,5 @@
 """
-ASGI config for MMA_GYM project.
+ASGI config for mma_gym project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MMA_GYM.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mma_gym.settings')
 
 application = get_asgi_application()

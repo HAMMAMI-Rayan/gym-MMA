@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.id %}Modifier le cours{% else %}Créer un cours{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{% if form.instance.id %}Modifier le cours{% else %}Créer un nouveau cours{% endif %}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_title" class="form-label">Titre du cours</label>
+                        <input type="text" name="title" id="id_title" class="form-control" value="{{ form.instance.title|default:'' }}" required>
+                        {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Description</label>
+                        <textarea name="description" id="id_description" class="form-control" rows="4" required>{{ form.instance.description|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_course_type" class="form-label">Type de cours</label>
+                            <select name="course_type" id="id_course_type" class="form-select" required>
+                                <option value="">---------</option>
+                                {% for type_code, type_name in form.fields.course_type.choices %}
+                                    <option value="{{ type_code }}" {% if form.instance.course_type == type_code %}selected{% endif %}>{{ type_name }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if form.course_type.errors %}
+                                <div class="text-danger">{{ form.course_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_level" class="form-label">Niveau</label>
+                            <select name="level" id="id_level" class="form-select" required>
+                                <option value="">---------</option>
+                                {% for level_code, level_name in form.fields.level.choices %}
+                                    <option value="{{ level_code }}" {% if form.instance.level == level_code %}selected{% endif %}>{{ level_name }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if form.level.errors %}
+                                <div class="text-danger">{{ form.level.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="id_date" class="form-label">Date</label>
+                            <input type="date" name="date" id="id_date" class="form-control" value="{{ form.instance.date|date:'Y-m-d'|default:'' }}" required>
+                            {% if form.date.errors %}
+                                <div class="text-danger">{{ form.date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="id_start_time" class="form-label">Heure de début</label>
+                            <input type="time" name="start_time" id="id_start_time" class="form-control" value="{{ form.instance.start_time|time:'H:i'|default:'' }}" required>
+                            {% if form.start_time.errors %}
+                                <div class="text-danger">{{ form.start_time.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="id_end_time" class="form-label">Heure de fin</label>
+                            <input type="time" name="end_time" id="id_end_time" class="form-control" value="{{ form.instance.end_time|time:'H:i'|default:'' }}" required>
+                            {% if form.end_time.errors %}
+                                <div class="text-danger">{{ form.end_time.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_max_participants" class="form-label">Nombre maximum de participants</label>
+                        <input type="number" name="max_participants" id="id_max_participants" class="form-control" value="{{ form.instance.max_participants|default:'20' }}" min="1" required>
+                        {% if form.max_participants.errors %}
+                            <div class="text-danger">{{ form.max_participants.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            {% if form.instance.id %}Mettre à jour{% else %}Créer{% endif %}
+                        </button>
+                        <a href="{% url 'course_list' %}" class="btn btn-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

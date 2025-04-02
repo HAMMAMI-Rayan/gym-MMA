@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}MMA Gym - Accueil{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-dark text-white p-5 rounded">
+    <h1 class="display-4">Bienvenue au MMA Gym</h1>
+    <p class="lead">Le meilleur gym de MMA pour tous les niveaux. Apprenez les arts martiaux mixtes avec nos coachs professionnels.</p>
+    <hr class="my-4 bg-light">
+    <p>Découvrez nos cours et réservez dès maintenant.</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'course_list' %}">Voir les cours</a>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                <h3 class="card-title">Cours pour tous les niveaux</h3>
+                <p class="card-text">Du débutant au combattant expérimenté, nous proposons des cours adaptés à tous les niveaux.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-fist-raised fa-3x mb-3 text-primary"></i>
+                <h3 class="card-title">Techniques MMA avancées</h3>
+                <p class="card-text">Apprenez les techniques de combat utilisées par les champions MMA avec nos coachs expérimentés.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-calendar-alt fa-3x mb-3 text-primary"></i>
+                <h3 class="card-title">Réservation facile</h3>
+                <p class="card-text">Réservez vos cours en quelques clics et gérez votre planning d'entraînement.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5">
+    <h2>Prochains cours</h2>
+    <hr>
+    {% if upcoming_courses %}
+    <div class="row">
+        {% for course in upcoming_courses %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    {{ course.get_course_type_display }} - {{ course.get_level_display }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description|truncatewords:15 }}</p>
+                    <p><strong>Date:</strong> {{ course.date }}</p>
+                    <p><strong>Heure:</strong> {{ course.start_time }} - {{ course.end_time }}</p>
+                    <p><strong>Coach:</strong> {{ course.coach.get_full_name }}</p>
+                    <p><strong>Places disponibles:</strong> {{ course.get_available_spots }} / {{ course.max_participants }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'course_detail' course.id %}" class="btn btn-primary">Détails</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Aucun cours à venir pour le moment.</p>
+    {% endif %}
+    <div class="text-center mt-3">
+        <a href="{% url 'course_list' %}" class="btn btn-outline-primary">Voir tous les cours</a>
+    </div>
+</div>
+{% endblock %}

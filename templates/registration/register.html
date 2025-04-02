@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Créer un compte</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                            <input type="text" name="username" id="id_username" class="form-control" required>
+                            {% if form.username.errors %}
+                                <div class="text-danger">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_email" class="form-label">Email</label>
+                            <input type="email" name="email" id="id_email" class="form-control" required>
+                            {% if form.email.errors %}
+                                <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_first_name" class="form-label">Prénom</label>
+                            <input type="text" name="first_name" id="id_first_name" class="form-control" required>
+                            {% if form.first_name.errors %}
+                                <div class="text-danger">{{ form.first_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_last_name" class="form-label">Nom</label>
+                            <input type="text" name="last_name" id="id_last_name" class="form-control" required>
+                            {% if form.last_name.errors %}
+                                <div class="text-danger">{{ form.last_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_password1" class="form-label">Mot de passe</label>
+                            <input type="password" name="password1" id="id_password1" class="form-control" required>
+                            {% if form.password1.errors %}
+                                <div class="text-danger">{{ form.password1.errors }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">{{ form.password1.help_text }}</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_password2" class="form-label">Confirmation mot de passe</label>
+                            <input type="password" name="password2" id="id_password2" class="form-control" required>
+                            {% if form.password2.errors %}
+                                <div class="text-danger">{{ form.password2.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_phone_number" class="form-label">Numéro de téléphone (optionnel)</label>
+                            <input type="text" name="phone_number" id="id_phone_number" class="form-control">
+                            {% if form.phone_number.errors %}
+                                <div class="text-danger">{{ form.phone_number.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input type="checkbox" name="is_coach" id="id_is_coach" class="form-check-input">
+                                <label for="id_is_coach" class="form-check-label">Je suis un coach</label>
+                                {% if form.is_coach.errors %}
+                                    <div class="text-danger">{{ form.is_coach.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">S'inscrire</button>
+                </form>
+                <hr>
+                <p>Déjà inscrit ? <a href="{% url 'login' %}">Connectez-vous ici</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

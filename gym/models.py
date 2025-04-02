@@ -1,69 +1,66 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
-class Coach(models.Model):
-    """
-    Modèle pour les entraîneurs de MMA
-    Relation 1:1 avec User pour l'authentification
-    """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    speciality = models.CharField(max_length=100)
-    experience = models.IntegerField(help_text="Années d'expérience")
-    bio = models.TextField()
-    phone = models.CharField(max_length=15)
-    
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    is_coach = models.BooleanField(default=False)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    photo = models.ImageField(upload_to='profile_pics', blank=True, null=True)
+
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name} - {self.speciality}"
+        return f"{self.user.username} - {'Coach' if self.is_coach else 'Membre'}"
+
 
 class Course(models.Model):
-    """
-    Modèle pour les cours de MMA
-    Relation N:1 avec Coach
-    """
-    LEVEL_CHOICES = [
-        ('BEG', 'Débutant'),
-        ('INT', 'Intermédiaire'),
-        ('ADV', 'Avancé'),
+    COURSE_TYPES = [
+        ('boxing', 'Boxe'),
+        ('bjj', 'Jiu-Jitsu Brésilien'),
+        ('wrestling', 'Lutte'),
+        ('mma', 'MMA'),
+        ('thai', 'Boxe Thaï'),
+        ('conditioning', 'Préparation Physique'),
     ]
     
-    name = models.CharField(max_length=100)
+    LEVELS = [
+        ('beginner', 'Débutant'),
+        ('intermediate', 'Intermédiaire'),
+        ('advanced', 'Avancé'),
+        ('all', 'Tous niveaux'),
+    ]
+    
+    title = models.CharField(max_length=100)
     description = models.TextField()
-    coach = models.ForeignKey(Coach, on_delete=models.CASCADE, related_name='courses')
-    level = models.CharField(max_length=3, choices=LEVEL_CHOICES)
-    max_students = models.IntegerField()
-    schedule = models.CharField(max_length=100, help_text="Jour et heure du cours")
+    coach = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses')
+    course_type = models.CharField(max_length=20, choices=COURSE_TYPES)
+    level = models.CharField(max_length=20, choices=LEVELS)
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    max_participants = models.PositiveIntegerField(default=20)
     
     def __str__(self):
-        return f"{self.name} ({self.get_level_display()}) - {self.coach}"
-
-class Member(models.Model):
-    """
-    Modèle pour les membres de la salle
-    Relation 1:1 avec User pour l'authentification
-    """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    date_of_birth = models.DateField()
-    address = models.TextField()
-    phone = models.CharField(max_length=15)
-    emergency_contact = models.CharField(max_length=100)
-    medical_info = models.TextField(blank=True, null=True)
+        return f"{self.title} - {self.get_course_type_display()} - {self.date}"
     
-    def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
+    def get_available_spots(self):
+        return self.max_participants - self.reservations.count()
+    
+    def is_full(self):
+        return self.get_available_spots() <= 0
+    
+    def is_upcoming(self):
+        return timezone.now().date() <= self.date
 
-class Enrollment(models.Model):
-    """
-    Modèle pour les inscriptions aux cours
-    Relation N:N entre Member et Course
-    """
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='enrollments')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
-    date_enrolled = models.DateField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
+
+class Reservation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reservations')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='reservations')
+    created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        # Contrainte unique pour éviter les doublons d'inscriptions
-        unique_together = ('member', 'course')
-    
+        unique_together = ['user', 'course']
+        
     def __str__(self):
-        return f"{self.member} inscrit à {self.course}"
+        return f"{self.user.username} - {self.course.title} - {self.course.date}"

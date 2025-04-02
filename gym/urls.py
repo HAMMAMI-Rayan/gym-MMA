@@ -1,23 +1,25 @@
 from django.urls import path
 from . import views
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.home, name='home'),
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
-    path('enrollment/', views.enroll_course, name='enrollment'),
     
-    # URLs pour le CRUD des entraîneurs
-    path('coaches/', views.CoachListView.as_view(), name='coach-list'),
-    path('coaches/<int:pk>/', views.CoachDetailView.as_view(), name='coach-detail'),
-    path('coaches/new/', views.CoachCreateView.as_view(), name='coach-create'),
-    path('coaches/<int:pk>/update/', views.CoachUpdateView.as_view(), name='coach-update'),
-    path('coaches/<int:pk>/delete/', views.CoachDeleteView.as_view(), name='coach-delete'),
     
-    # URLs pour le CRUD des cours
-    path('courses/', views.CourseListView.as_view(), name='course-list'),
-    path('courses/<int:pk>/', views.CourseDetailView.as_view(), name='course-detail'),
-    path('courses/new/', views.CourseCreateView.as_view(), name='course-create'),
-    path('courses/<int:pk>/update/', views.CourseUpdateView.as_view(), name='course-update'),
-    path('courses/<int:pk>/delete/', views.CourseDeleteView.as_view(), name='course-delete'),
+    path('logout/', views.logout_view, name='logout'),  # Vue de déconnexion personnalisée
+    
+    path('courses/', views.CourseListView.as_view(), name='course_list'),
+    path('courses/<int:pk>/', views.CourseDetailView.as_view(), name='course_detail'),
+    path('courses/new/', views.CourseCreateView.as_view(), name='course_create'),
+    path('courses/<int:pk>/update/', views.CourseUpdateView.as_view(), name='course_update'),
+    path('courses/<int:pk>/delete/', views.CourseDeleteView.as_view(), name='course_delete'),
+    
+    path('courses/<int:course_id>/reserve/', views.reserve_course, name='reserve_course'),
+    path('reservations/<int:reservation_id>/cancel/', views.cancel_reservation, name='cancel_reservation'),
+    
+    path('coach/dashboard/', views.CoachDashboardView.as_view(), name='coach_dashboard'),
+    path('courses/<int:course_id>/reserve/', views.reserve_course, name='reserve-course'),
+    path('reservation/<int:reservation_id>/cancel/', views.cancel_reservation, name='cancel-reservation'),
 ]
